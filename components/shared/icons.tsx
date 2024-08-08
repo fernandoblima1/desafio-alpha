@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  ArrowUpRight,
   BrainCircuit,
   Check,
   ChevronDown,
@@ -27,6 +28,7 @@ import {
   Trash,
   User,
   Lock,
+  Linkedin,
   X,
 } from "lucide-react";
 
@@ -35,6 +37,7 @@ export type Icon = LucideIcon;
 export const Icons = {
   add: Plus,
   arrowRight: ArrowRight,
+  arrowUpRight: ArrowUpRight,
   billing: CreditCard,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
@@ -56,6 +59,7 @@ export const Icons = {
   user: User,
   warning: AlertTriangle,
   home: Home,
+  linkedin: Linkedin,
   piechart: PieChart,
   chevrondown: ChevronDown,
   brain: BrainCircuit,

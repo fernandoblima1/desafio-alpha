@@ -32,7 +32,10 @@
     ],
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json",
   },
+  "typeRoots": ["./node_modules/@types", "./types"],
   "include": [
+    "src/**/*.ts", 
+    "src/**/*.tsx",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",

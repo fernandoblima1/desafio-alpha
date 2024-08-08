@@ -3,7 +3,6 @@
 import { useMounted } from "@/hooks/use-mounted";
 // import { SignInModal } from "@/components/layout/sign-in-modal";
 
-import { LanguageModal } from "../modals/language-modal";
 import { SignInModal } from "../modals/sign-in-modal";
 
 export const ModalProvider = () => {
@@ -16,7 +15,6 @@ export const ModalProvider = () => {
   return (
     <>
       <SignInModal />
-      <LanguageModal />
     </>
   );
 };

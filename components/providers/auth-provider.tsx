@@ -3,18 +3,11 @@
 import React, {
   createContext,
   useContext,
-  useState,
   useEffect,
+  useState,
   ReactNode,
 } from "react";
-import { useRouter } from "next/navigation"; // Use next/navigation instead of next/router
-
-interface AuthContextType {
-  user: any; // Adjust this type based on your user object
-  login: (taxNumber: string, password: string) => Promise<void>;
-  logout: () => void;
-  loading: boolean;
-}
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
@@ -22,29 +15,33 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
+interface AuthContextType {
+  login: (taxNumber: string, password: string) => Promise<void>;
+  register: (
+    name: string,
+    taxNumber: string,
+    mail: string,
+    phone: string,
+    password: string
+  ) => Promise<void>;
+  logout: () => void;
+  loading: boolean;
+}
+
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
-    if (token) {
-      fetch("https://interview.t-alpha.com.br/api/auth/me", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => setUser(data))
-        .catch(() => localStorage.removeItem("authToken"))
-        .finally(() => setLoading(false));
+    if (!token) {
+      router.push("/");
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [router]);
 
-  const login = async (taxNumber: string, password: string) => {
+  const handleLogin = async (taxNumber: string, password: string) => {
     const response = await fetch(
       "https://interview.t-alpha.com.br/api/auth/login",
       {
@@ -57,22 +54,55 @@ export function AuthProvider({ children }: AuthProviderProps) {
     );
 
     if (response.ok) {
-      const { token } = await response.json();
-      localStorage.setItem("authToken", token);
+      const { data } = await response.json();
+      localStorage.setItem("authToken", data.token);
+      console.log(response);
       router.push("/dashboard");
     } else {
       throw new Error("Invalid credentials");
     }
   };
 
-  const logout = () => {
+  const handleRegister = async (
+    name: string,
+    taxNumber: string,
+    mail: string,
+    phone: string,
+    password: string
+  ) => {
+    const response = await fetch(
+      "https://interview.t-alpha.com.br/api/auth/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, taxNumber, mail, phone, password }),
+      }
+    );
+
+    if (response.ok) {
+      await handleLogin(taxNumber, password);
+    } else {
+      throw new Error("Registration failed");
+    }
+  };
+
+  const handleLogout = () => {
     localStorage.removeItem("authToken");
-    setUser(null);
+    localStorage.removeItem("authUser");
     router.push("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        login: handleLogin,
+        register: handleRegister,
+        logout: handleLogout,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
