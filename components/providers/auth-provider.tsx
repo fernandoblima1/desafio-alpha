@@ -56,7 +56,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     if (response.ok) {
       const { data } = await response.json();
       localStorage.setItem("authToken", data.token);
-      console.log(response);
+
       router.push("/dashboard");
     } else {
       throw new Error("Invalid credentials");

@@ -53,19 +53,19 @@ export const SignInModal = () => {
           data.phone,
           data.password
         );
-        toast("Sucesso!", {
+        toast.success("Sucesso!", {
           description: "Usuário registrado com sucesso.",
         });
       } else {
         await login(data.taxNumber, data.password);
-        toast("Sucesso!", {
+        toast.success("Sucesso!", {
           description: "Você logou com sucesso.",
         });
       }
       signInModal.onClose();
     } catch (error) {
       console.error(error);
-      toast("Oops...", {
+      toast.error("Oops...", {
         description: isRegister
           ? "Falha no registro. Por favor, tente novamente."
           : "Credenciais inválidas. Por favor, tente novamente.",

@@ -46,7 +46,7 @@ export default function RootLayout({
               <Suspense fallback="...">
                 <NavBar items={marketingConfig.mainNav} scroll={true} />
               </Suspense>
-              <main className="flex-1">{children}</main>
+              <main className="flex-1 container">{children}</main>
               <Footer />
             </div>
           </ThemeProvider>
