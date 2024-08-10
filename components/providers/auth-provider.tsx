@@ -17,6 +17,7 @@ interface AuthProviderProps {
 
 interface AuthContextType {
   login: (taxNumber: string, password: string) => Promise<void>;
+  token: string | null;
   register: (
     name: string,
     taxNumber: string,
@@ -36,10 +37,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const token = localStorage.getItem("authToken");
     if (!token) {
       router.push("/");
+      router.refresh;
     } else {
       setLoading(false);
     }
-  }, [router]);
+  }, [children]);
 
   const handleLogin = async (taxNumber: string, password: string) => {
     const response = await fetch(
@@ -58,6 +60,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.setItem("authToken", data.token);
 
       router.push("/dashboard");
+      router.refresh();
     } else {
       throw new Error("Invalid credentials");
     }
@@ -90,13 +93,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
-    localStorage.removeItem("authUser");
-    router.push("/login");
+    router.push("/");
+    router.refresh();
   };
 
   return (
     <AuthContext.Provider
       value={{
+        token: localStorage.getItem("authToken"),
         login: handleLogin,
         register: handleRegister,
         logout: handleLogout,

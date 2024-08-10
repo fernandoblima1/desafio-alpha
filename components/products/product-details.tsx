@@ -23,6 +23,8 @@ import { Product } from "@/types";
 import { EmptyPlaceholder } from "../shared/empty-placeholder";
 import { formatCurrency } from "@/lib/utils";
 import { useUpdateProduct } from "@/hooks/use-update-product-modal";
+import { useDeleteProduct } from "@/hooks/use-delete-product-modal";
+import useMediaQuery from "@/hooks/use-media-query";
 
 type ProductDetailsProps = {
   product: Product | null;
@@ -30,13 +32,17 @@ type ProductDetailsProps = {
 
 export default function ProductDatails({ product }: ProductDetailsProps) {
   const router = useRouter();
-  const { onOpen } = useUpdateProduct();
-
+  const updateProduct = useUpdateProduct();
+  const deleteProduct = useDeleteProduct();
+  const { isMobile } = useMediaQuery();
+  if (isMobile) {
+    return null;
+  }
   return (
     <main className="">
       <div className="">
         {product ? (
-          <Card className={`overflow-hidden `} x-chunk="dashboard-05-chunk-4">
+          <Card className="max-w-xl overflow-hidden">
             <CardHeader className="flex flex-row items-start bg-muted/50">
               <div className="grid gap-0.5">
                 <CardTitle className="group flex items-center gap-2 text-lg">
@@ -52,11 +58,15 @@ export default function ProductDatails({ product }: ProductDetailsProps) {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onOpen(product.id)}>
+                    <DropdownMenuItem
+                      onClick={() => updateProduct.onOpen(product.id)}
+                    >
                       <Pencil className="mr-2 h-4 w-4" />
                       <span>Editar</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => deleteProduct.onOpen(product.id)}
+                    >
                       <File className="mr-2 h-4 w-4" />
                       <span>Apagar</span>
                     </DropdownMenuItem>
@@ -66,32 +76,32 @@ export default function ProductDatails({ product }: ProductDetailsProps) {
               </div>
             </CardHeader>
             <CardContent className="p-6 text-sm">
-              <div className="grid gap-3">
-                <div className="font-semibold">Detalhes do produto</div>
-                <ul className="grid gap-3">
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Nome</span>
-                    <span>{product?.name}</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Descrição</span>
-                    <span>{product?.description}</span>
-                  </li>
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Estoque</span>
-                    <span>{product?.stock}</span>
-                  </li>
-                  <Separator className="my-2" />
-                  <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Preço</span>
-                    <span>
-                      <Badge className="text-xs" variant="default">
-                        {formatCurrency(product?.price) || "Não precificado"}
-                      </Badge>
-                    </span>
-                  </li>
-                </ul>
-              </div>
+              <div className="font-semibold">Detalhes do produto</div>
+              <ul className="flex flex-col w-full gap-1 mt-2 overflow-hidden">
+                <li className="flex gap-2 items-center justify-between">
+                  <span className="text-muted-foreground">Nome</span>
+                  <span className="break-words">{product?.name}</span>
+                </li>
+                <li className="flex gap-2 items-center justify-between">
+                  <span className="text-muted-foreground">Descrição</span>
+                  <span className="w-full overflow-auto break-words text-right">
+                    {product?.description}
+                  </span>
+                </li>
+                <li className="flex gap-2 items-center justify-between">
+                  <span className="text-muted-foreground">Estoque</span>
+                  <span>{product?.stock}</span>
+                </li>
+                <Separator className="my-2" />
+                <li className="flex gap-2 items-center justify-between">
+                  <span className="text-muted-foreground">Preço</span>
+                  <span>
+                    <Badge className="text-xs" variant="default">
+                      {formatCurrency(product?.price) || "Não precificado"}
+                    </Badge>
+                  </span>
+                </li>
+              </ul>
             </CardContent>
             <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3"></CardFooter>
           </Card>

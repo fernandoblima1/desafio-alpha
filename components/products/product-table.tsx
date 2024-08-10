@@ -20,6 +20,10 @@ import {
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Product } from "@/types";
 import { AddProductButton } from "../buttons/add-product-button";
+import useMediaQuery from "@/hooks/use-media-query";
+import { Icons } from "../shared/icons";
+import { useDeleteProduct } from "@/hooks/use-delete-product-modal";
+import { useUpdateProduct } from "@/hooks/use-update-product-modal";
 
 const columnClasses = {
   name: "w-[200px]",
@@ -39,8 +43,9 @@ export default function ProductTable({
   setSelectedProductId,
   selectedProductId,
 }: ProductTableProps) {
-  const [categories, setCategories] = useState([]);
-
+  const { isTablet } = useMediaQuery();
+  const updateProduct = useUpdateProduct();
+  const deleteProduct = useDeleteProduct();
   const handleSelectProduct = (selectedProductId: number) => {
     setSelectedProductId(selectedProductId);
   };
@@ -65,13 +70,19 @@ export default function ProductTable({
                 <TableHeader>
                   <TableRow>
                     <TableHead className={columnClasses.name}>Nome</TableHead>
-                    <TableHead className={columnClasses.description}>
-                      Descrição
-                    </TableHead>
+                    {!isTablet && (
+                      <TableHead className={columnClasses.description}>
+                        Descrição
+                      </TableHead>
+                    )}
+
                     <TableHead className={columnClasses.price}>Preço</TableHead>
                     <TableHead className={columnClasses.stock}>
                       Estoque
                     </TableHead>
+                    {isTablet && (
+                      <TableHead className="w-[50px]">Ação</TableHead>
+                    )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -86,15 +97,37 @@ export default function ProductTable({
                       <TableCell className={columnClasses.name}>
                         {product.name}
                       </TableCell>
-                      <TableCell className={columnClasses.description}>
-                        {product.description}
-                      </TableCell>
+                      {!isTablet && (
+                        <TableCell className={columnClasses.description}>
+                          {product.description}
+                        </TableCell>
+                      )}
                       <TableCell className={columnClasses.price}>
                         {product.price}
                       </TableCell>
                       <TableCell className={columnClasses.stock}>
                         {product.stock}
                       </TableCell>
+                      {isTablet && (
+                        <TableCell className="w-[50px] flex flex-row gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateProduct.onOpen(product.id);
+                            }}
+                          >
+                            <Icons.pencil className="w-5 h-5" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteProduct.onOpen(product.id);
+                            }}
+                          >
+                            <Icons.trash className="w-5 h-5" />
+                          </button>
+                        </TableCell>
+                      )}
                     </TableRow>
                   ))}
                 </TableBody>

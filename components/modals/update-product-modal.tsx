@@ -99,14 +99,14 @@ export const UpdateProductModal = () => {
       setIsUpdating(true);
       const token = localStorage.getItem("authToken") ?? "";
       const priceToSend = productData.price
-        .replace("R$", "")
+        .replace("R$ ", "")
         .replace(/\./g, "")
         .replace(",", ".");
 
       const response = await fetch(
         `https://interview.t-alpha.com.br/api/products/update-product/${productId}`,
         {
-          method: "PUT",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -116,19 +116,17 @@ export const UpdateProductModal = () => {
             price: parseFloat(priceToSend),
           }),
         }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update product");
-      }
-
-      return { success: true };
+      ).then((res) => {
+        if (!res.ok) {
+          toast.error("Ocorreu um erro ao atualizar o produto.");
+        }
+        toast.success("Produto atualizado com sucesso.");
+        onClose();
+      });
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
-      console.error("Error updating product", errorMessage);
       toast.error("Ocorreu um erro ao atualizar o produto.");
-      return { success: false, error: errorMessage };
     } finally {
       setIsUpdating(false);
     }
@@ -136,13 +134,6 @@ export const UpdateProductModal = () => {
 
   const onSubmit = async (data: ProductFormData) => {
     const response = await updateProduct(data);
-
-    if (response.success) {
-      toast.success("Produto atualizado com sucesso.");
-      onClose();
-    } else {
-      toast.error("Ocorreu um erro ao atualizar o produto.");
-    }
   };
 
   return (

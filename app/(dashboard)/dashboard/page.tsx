@@ -9,12 +9,16 @@ import { Product } from "@/types";
 import { CardSkeleton } from "@/components/shared/card-skeleton";
 import { useRouter } from "next/navigation";
 import { useCreateProduct } from "@/hooks/use-create-product-modal";
+import { useUpdateProduct } from "@/hooks/use-update-product-modal";
+import { useDeleteProduct } from "@/hooks/use-delete-product-modal";
 
 export default function ProductDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const createProductModal = useCreateProduct();
+  const updateProductModal = useUpdateProduct();
+  const deleteProductModal = useDeleteProduct();
 
   const [selectedProductId, setSelectedProductId] = useState<number | null>(
     null
@@ -50,12 +54,24 @@ export default function ProductDashboard() {
   }, []);
 
   useEffect(() => {
+    router.refresh();
+  }, []);
+
+  useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
 
   useEffect(() => {
-    !createProductModal.isOpen && fetchProducts();
-  }, [fetchProducts, createProductModal.isOpen]);
+    !createProductModal.isOpen &&
+      !updateProductModal.isOpen &&
+      !deleteProductModal.isOpen &&
+      fetchProducts();
+  }, [
+    fetchProducts,
+    createProductModal.isOpen,
+    updateProductModal.isOpen,
+    deleteProductModal.isOpen,
+  ]);
 
   const selectedProduct =
     products.find((product) => product.id === selectedProductId) ?? null;
