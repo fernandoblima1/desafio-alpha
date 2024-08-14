@@ -26,7 +26,11 @@ export default function ProductDashboard() {
 
   const fetchProducts = useCallback(async () => {
     try {
-      const token = localStorage.getItem("authToken");
+      let token = null;
+      if (typeof window !== "undefined") {
+        token = localStorage.getItem("authToken");
+      }
+
       setIsLoading(true);
       const response = await fetch(
         "https://interview.t-alpha.com.br/api/products/get-all-products",

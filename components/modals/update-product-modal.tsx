@@ -46,7 +46,10 @@ export const UpdateProductModal = () => {
       const fetchProduct = async () => {
         setIsLoading(true);
         try {
-          const token = localStorage.getItem("authToken") ?? "";
+          let token = null;
+          if (typeof window !== "undefined") {
+            token = localStorage.getItem("authToken");
+          }
           const response = await fetch(
             `https://interview.t-alpha.com.br/api/products/get-one-product/${productId}`,
             {
@@ -97,7 +100,10 @@ export const UpdateProductModal = () => {
   const updateProduct = async (productData: ProductFormData) => {
     try {
       setIsUpdating(true);
-      const token = localStorage.getItem("authToken") ?? "";
+      let token = null;
+      if (typeof window !== "undefined") {
+        token = localStorage.getItem("authToken");
+      }
       const priceToSend = productData.price
         .replace("R$ ", "")
         .replace(/\./g, "")

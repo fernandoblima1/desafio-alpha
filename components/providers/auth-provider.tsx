@@ -34,7 +34,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
+    let token = null;
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("authToken");
+    }
     if (!token) {
       router.push("/");
       router.refresh;
@@ -57,7 +60,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (response.ok) {
       const { data } = await response.json();
-      localStorage.setItem("authToken", data.token);
+
+      if (typeof window !== "undefined") {
+        localStorage.setItem("authToken", data.token);
+      }
 
       router.push("/dashboard");
       router.refresh();
@@ -92,15 +98,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("authToken");
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("authToken");
+    }
     router.push("/");
     router.refresh();
   };
-
+  let token = null;
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("authToken");
+  }
   return (
     <AuthContext.Provider
       value={{
-        token: localStorage.getItem("authToken"),
+        token: token,
         login: handleLogin,
         register: handleRegister,
         logout: handleLogout,

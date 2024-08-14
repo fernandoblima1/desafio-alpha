@@ -57,7 +57,10 @@ export const CreateProductModal = () => {
 
   const createProduct = async (productData: ProductFormData) => {
     try {
-      const token = localStorage.getItem("authToken") ?? "";
+      let token = null;
+      if (typeof window !== "undefined") {
+        token = localStorage.getItem("authToken");
+      }
       const priceToSend = productData.price
         .replace("R$", "")
         .replace(/\./g, "")
